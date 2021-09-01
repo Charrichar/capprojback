@@ -2,27 +2,23 @@ const express =require('express');
 const cors = require('cors')
 const bodyParser = require('body-parser')
 const app = express();
-const db = require('./queries')
 const port = 3003
+const postgres = require('./postgres.js')
+
+//middleware
+app.use(express.json());
+app.use(express.static('public'))
 
 
 
-app.use(bodyParser.json())
-app.use(
-  bodyParser.urlencoded({
-    extended: true,
-  })
-)
 
-app.get('/', (req, res) => {
-  res.json({ response: 'response'})
-})
+//controller
 
-app.get('/products', db.getUsers)
-app.get('/products/:id', db.getUserById)
-app.post('/products', db.createUser)
-app.put('/products/:id', db.updateUser)
-app.delete('/products/:id', db.deleteUser)
+const productController = require('./controllers/products.js')
+app.use('/products', productController)
+
+///create///
+postgres.connect()
 
 app.listen(port, ()=> {
   console.log('listening...');
